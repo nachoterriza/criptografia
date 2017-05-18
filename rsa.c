@@ -133,7 +133,7 @@ Claves * genera_claves() {
         }
         Claves tmp = ret[eleccion];
         ret[eleccion] = ret[0];
-        ret[0] = eleccion;
+        ret[0] = tmp;
     }
 
     return ret;
@@ -141,11 +141,12 @@ Claves * genera_claves() {
 
 int main() {
    Claves * mis_claves = genera_claves();
-   char mensaje[MAX_MENSAJE], cifrado*;
+   char mensaje[MAX_MENSAJE];
+   char* cifrado;
    printf("Escriba su mensaje\n");
    //fflush(stdin);
    scanf("%s", mensaje);
-   cifrado=cifra(mensaje, mis_claves[0]);
+   cifrado=cifra(mensaje, mis_claves[0].publica);
    printf("El mensaje cifrado es:\n%s\n", cifrado);
    //printf("Elige un par de claves: 0 ... %i\n", 
    return 0;
