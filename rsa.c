@@ -8,13 +8,13 @@
 #define MAX_MENSAJE     100
 
 typedef struct Clave_publica {
-    long int n;
-    long int e;
+    unsigned long int n;
+    unsigned long int e;
 } Clave_publica;
 
 typedef struct Clave_privada {
-    long int n;
-    long int d;
+    unsigned long int n;
+    unsigned long int d;
 } Clave_privada;
 
 typedef struct Claves {
@@ -22,19 +22,20 @@ typedef struct Claves {
     Clave_privada privada;
 } Claves;
 
-Claves * genera_claves();
-int es_primo(long int num);
-long int encuentra_d(long int e, long int phi);
+Claves genera_claves();
+int es_primo(unsigned long int num);
+unsigned long int encuentra_d(unsigned long int e, unsigned long int phi);
 void salida(char * mensaje);
-long int mcd(long int a, long int b);
+unsigned long int mcd(unsigned long int a, unsigned long int b);
 char * cifra(char * mensaje, Clave_publica clave);
 char * descifra(char * mensaje, Clave_privada clave);
+long int exponente_modular(long int base, long int exp, long int mod);
 
 /** Funcion mcd: máximo común divisor
  *  Entradas: a y b, dos números enteros
  *  Salida: mcd(a,b).
  */
-long int mcd(long int a, long int b) {
+unsigned long int mcd(unsigned long int a, unsigned long int b) {
     while(a!=b) {
         if(a > b)
             a-=b;
@@ -43,6 +44,18 @@ long int mcd(long int a, long int b) {
     }
     return a;
 }
+
+long int exponente_modular(long int base, long int exp, long int mod) {
+    int k=0;
+    int ret=1;
+    for(k;k<exp;k++) {
+        ret*=base;
+        ret = ret%mod;
+    }
+
+    return ret;
+}
+
 
 /** Función salida:
  *  Entrada: Cadena mensaje a imprimir
@@ -55,7 +68,7 @@ void salida(char * mensaje) {
     exit(1);
 }
 
-int es_primo(long int num) {
+int es_primo(unsigned long int num) {
     double max=sqrt(num);
     if(num%2==0)
         return num==2;
@@ -66,10 +79,10 @@ int es_primo(long int num) {
     return 1;
 }
 
-long int encuentra_d(long int e, long int phi) {
+unsigned long int encuentra_d(unsigned long int e, unsigned long int phi) {
     
     // Encuentra d tal que (d * e) % phi(n) = 1
-    long int d=1;
+    unsigned long int d=1;
     while(1) {
         if(((d*e) % phi) == 1)
             return d;
@@ -79,10 +92,12 @@ long int encuentra_d(long int e, long int phi) {
 }
 
 
-Claves * genera_claves() {
-    long int p, q, n, phi;
-    Claves *ret = malloc(sizeof(Claves));
-    char respuesta, eleccion;
+Claves genera_claves() {
+    unsigned long int p, q, n, phi;
+    //Claves *ret = malloc(sizeof(Claves));
+    Claves ret[MAX_CLAVES];
+    char respuesta, *eleccion;
+    int indice=0;
 
     printf("Necesitamos dos números primos:\n");
     scanf("%ld", &p);
@@ -129,26 +144,28 @@ Claves * genera_claves() {
         //printf("Indique el número de la nueva clave: 1,...,%ld:\n", i);
         //scanf("%ld", eleccion);
         eleccion = getchar();
-        while((eleccion-'0')<1 || (eleccion-'0')>i) {
-            printf("Por favor escoja un número de clave válido: 1,...,%ld:\n", i);
-            //scanf("%ld", eleccion);
-            eleccion = getchar();
+        while(indice<1 || indice>i) {
+            printf("Por favor escoja un número de clave válido: 1,...,%ld:\n", i-1);
+            scanf("%d", indice);
+            //scanf("%s", eleccion);
+            //gets(eleccion);
+            //indice = atoi(eleccion);
+            //eleccion = getchar();
+            printf("Elegido: %i\n", indice);
         }
-        printf("Paso1\n");
-        Claves tmp = ret[(eleccion-'0')];
-        ret[(eleccion-'0')] = ret[0];
+        Claves tmp = ret[indice];
+        ret[indice] = ret[0];
         ret[0] = tmp;
-        printf("Paso2\n");
     }
     printf("\n\nClave elegida:\n\n\tkp = ( %ld, %ld )\n\n\tks = ( %ld, %ld )\n\n", ret[0].publica.e, ret[0].publica.n, ret[0].privada.d, ret[0].privada.n );
 
-    return ret;
+    return ret[0];
 }
 
 char * cifra(char * mensaje, Clave_publica clave) {
-    char texto_cifrado[MAX_MENSAJE];
+    char *texto_cifrado = malloc(sizeof(char));
     int k=0;
-    long int texto_plano[MAX_MENSAJE], temp[MAX_MENSAJE], enc;
+    unsigned long int texto_plano[MAX_MENSAJE], temp[MAX_MENSAJE], enc;
 
     for(k=0; mensaje[k]!=NULL; k++) {
         texto_plano[k] = mensaje[k];
@@ -157,11 +174,13 @@ char * cifra(char * mensaje, Clave_publica clave) {
     texto_plano[k]=NULL;
     printf("\n");
 
+    printf("Clave->e: %ld, Clave->n: %ld\n", clave.e, clave.n);
     k=0;
 
     while(texto_plano[k] != NULL) {
        enc = texto_plano[k];
-       temp[k] = ( ((long int) pow(enc, clave.e)) % clave.n);
+       //temp[k] = ( ((unsigned long long int) pow(enc, clave.e)) % clave.n);
+       temp[k] = exponente_modular(enc, clave.e, clave.n);
        texto_cifrado[k] = temp[k]+'a';
        printf("Int transformado: %ld\n", temp[k]);
        printf("Char transformado: %c\n", texto_cifrado[k]);
@@ -173,13 +192,13 @@ char * cifra(char * mensaje, Clave_publica clave) {
 }
 
 int main() {
-   Claves * mis_claves = genera_claves();
+   Claves mis_claves = genera_claves();
    char mensaje[MAX_MENSAJE];
    char* cifrado;
    printf("Escriba su mensaje\n");
    fflush(stdin);
    scanf("%s", mensaje);
-   cifrado=cifra(mensaje, mis_claves[0].publica);
+   cifrado=cifra(mensaje, mis_claves.publica);
    printf("El mensaje cifrado es:\n%s\n", cifrado);
    return 0;
 }
