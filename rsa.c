@@ -6,7 +6,6 @@
 
 #define MAX_CLAVES      50
 #define MAX_MENSAJE     100
-#define CHAR_OFFSET     96
 
 typedef struct Clave_publica {
     unsigned long int n;
