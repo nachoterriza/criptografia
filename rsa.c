@@ -164,12 +164,8 @@ long int * cifra(long int * mensaje, Clave_publica clave) {
     long int temp[MAX_MENSAJE], enc;
     long int *texto_cifrado = malloc(sizeof(long int) * MAX_MENSAJE);
 
-   //printf("Clave->e: %ld, Clave->n: %ld\n", clave.e, clave.n);
-
     while(mensaje[k] != -1) {
-       enc = mensaje[k] - CHAR_OFFSET;
-       temp[k] = exponente_modular(enc, clave.e, clave.n);
-       texto_cifrado[k] = (temp[k] + CHAR_OFFSET);
+       texto_cifrado[k] = exponente_modular(mensaje[k], clave.e, clave.n);
        k++;
     }
     texto_cifrado[k] = -1;
@@ -181,12 +177,9 @@ long int * descifra(long int * mensaje, Clave_privada clave) {
     int k=0;
     long int temp[MAX_MENSAJE], enc;
     long int *texto_plano = malloc(sizeof(long int) * MAX_MENSAJE);
-  //printf("Clave->d: %ld, Clave->n: %ld\n", clave.d, clave.n);
     
     while(mensaje[k] != -1) {
-        enc = mensaje[k] - CHAR_OFFSET;
-        temp[k] = exponente_modular(enc, clave.d, clave.n);
-        texto_plano[k] = (temp[k] + CHAR_OFFSET);
+        texto_plano[k] = exponente_modular(mensaje[k], clave.d, clave.n);
         k++;
     }
     texto_plano[k] = -1;
