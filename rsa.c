@@ -97,7 +97,7 @@ Claves genera_claves() {
     //Claves *ret = malloc(sizeof(Claves));
     Claves ret[MAX_CLAVES];
     char respuesta, *eleccion;
-    int indice=0;
+    long int indice=0;
 
     printf("Necesitamos dos números primos:\n");
     scanf("%ld", &p);
@@ -113,10 +113,11 @@ Claves genera_claves() {
     printf("N = %ld, p = %ld, q = %ld\n", n, p, q);
     phi = (p-1) * (q-1); 
     printf("Phi(n) = %ld\n", phi);
+
     /* Elegir e tal que 1 < e < phi(n), y tal que
      * e y n sean coprimos. */
     long int i=2,j=0;
-    for(i; i<phi; i++) {
+    for(i; i<phi && j<MAX_CLAVES; i++) {
         if((mcd(i,n)==1) && (mcd(i,phi)==1)){ // e y n son coprimos, y e y phi(n) también
             //printf("%ld y %ld son coprimos\n", i, n);
             ret[j].publica.e=i;
@@ -146,11 +147,7 @@ Claves genera_claves() {
         eleccion = getchar();
         while(indice<1 || indice>i) {
             printf("Por favor escoja un número de clave válido: 1,...,%ld:\n", i-1);
-            scanf("%d", indice);
-            //scanf("%s", eleccion);
-            //gets(eleccion);
-            //indice = atoi(eleccion);
-            //eleccion = getchar();
+            scanf("%ld", &indice);
             printf("Elegido: %i\n", indice);
         }
         Claves tmp = ret[indice];
@@ -178,10 +175,12 @@ char * cifra(char * mensaje, Clave_publica clave) {
     k=0;
 
     while(texto_plano[k] != NULL) {
+       //enc = texto_plano[k] - ('a'-1);
        enc = texto_plano[k];
        //temp[k] = ( ((unsigned long long int) pow(enc, clave.e)) % clave.n);
        temp[k] = exponente_modular(enc, clave.e, clave.n);
-       texto_cifrado[k] = temp[k]+'a';
+       texto_cifrado[k] = temp[k];
+       //texto_cifrado[k] = temp[k] + ('a'-1);
        printf("Int transformado: %ld\n", temp[k]);
        printf("Char transformado: %c\n", texto_cifrado[k]);
        k++;
@@ -191,15 +190,45 @@ char * cifra(char * mensaje, Clave_publica clave) {
     return texto_cifrado;
 }
 
+char * descifra(char * mensaje, Clave_privada clave) {
+    char * texto_plano = malloc(sizeof(char));
+    int k=0;
+    unsigned long int texto_cifrado[MAX_MENSAJE], temp[MAX_MENSAJE], enc;
+
+    for(k=0; mensaje[k]!=NULL; k++) {
+        texto_cifrado[k] = mensaje[k];
+        printf("%ld, ", texto_cifrado[k]);
+    }
+    texto_cifrado[k]=NULL;
+    printf("\n");
+
+    printf("Clave->d: %ld, Clave->n: %ld\n", clave.d, clave.n);
+    k=0;
+    
+    while(texto_cifrado[k] != NULL) {
+        //enc = texto_cifrado[k] - ('a'-1);
+        enc = texto_cifrado[k];
+        temp[k] = exponente_modular(enc, clave.d, clave.n);
+        texto_plano[k] = temp[k];
+        //texto_plano[k] = temp[k] + ('a'-1);
+        k++;
+    }
+    texto_plano[k] = NULL;
+
+    return texto_plano;
+}
+
 int main() {
    Claves mis_claves = genera_claves();
    char mensaje[MAX_MENSAJE];
-   char* cifrado;
-   printf("Escriba su mensaje\n");
+   char *cifrado, *descifrado;;
+   printf("Escriba su mensaje:\n");
    fflush(stdin);
    scanf("%s", mensaje);
    cifrado=cifra(mensaje, mis_claves.publica);
    printf("El mensaje cifrado es:\n%s\n", cifrado);
+   descifrado= descifra(cifrado, mis_claves.privada);
+   printf("El mensaje descifrado es:\n%s\n", descifrado);
    return 0;
 }
 
