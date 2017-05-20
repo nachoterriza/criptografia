@@ -46,6 +46,10 @@ unsigned long int mcd(unsigned long int a, unsigned long int b) {
     return a;
 }
 
+/** Funcion exponente_modular: potencia de un número en un anillo
+ *  Entradas: base, exponente y módulo
+ *  Salida: (base elevado a exp) módulo mod
+ */
 long int exponente_modular(long int base, long int exp, long int mod) {
     int k=0;
     int ret=1;
@@ -160,7 +164,7 @@ long int * cifra(long int * mensaje, Clave_publica clave) {
     long int temp[MAX_MENSAJE], enc;
     long int *texto_cifrado = malloc(sizeof(long int) * MAX_MENSAJE);
 
-    printf("Clave->e: %ld, Clave->n: %ld\n", clave.e, clave.n);
+   //printf("Clave->e: %ld, Clave->n: %ld\n", clave.e, clave.n);
 
     while(mensaje[k] != -1) {
        enc = mensaje[k] - CHAR_OFFSET;
@@ -177,7 +181,7 @@ long int * descifra(long int * mensaje, Clave_privada clave) {
     int k=0;
     long int temp[MAX_MENSAJE], enc;
     long int *texto_plano = malloc(sizeof(long int) * MAX_MENSAJE);
-    printf("Clave->d: %ld, Clave->n: %ld\n", clave.d, clave.n);
+  //printf("Clave->d: %ld, Clave->n: %ld\n", clave.d, clave.n);
     
     while(mensaje[k] != -1) {
         enc = mensaje[k] - CHAR_OFFSET;
