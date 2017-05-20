@@ -6,6 +6,7 @@
 
 #define MAX_CLAVES      50
 #define MAX_MENSAJE     100
+#define CHAR_OFFSET     96
 
 typedef struct Clave_publica {
     unsigned long int n;
@@ -27,8 +28,8 @@ int es_primo(unsigned long int num);
 unsigned long int encuentra_d(unsigned long int e, unsigned long int phi);
 void salida(char * mensaje);
 unsigned long int mcd(unsigned long int a, unsigned long int b);
-char * cifra(char * mensaje, Clave_publica clave);
-char * descifra(char * mensaje, Clave_privada clave);
+long int * cifra(long int * mensaje, Clave_publica clave);
+long int * descifra(long int * mensaje, Clave_privada clave);
 long int exponente_modular(long int base, long int exp, long int mod);
 
 /** Funcion mcd: máximo común divisor
@@ -94,9 +95,8 @@ unsigned long int encuentra_d(unsigned long int e, unsigned long int phi) {
 
 Claves genera_claves() {
     unsigned long int p, q, n, phi;
-    //Claves *ret = malloc(sizeof(Claves));
     Claves ret[MAX_CLAVES];
-    char respuesta, *eleccion;
+    char respuesta;
     long int indice=0;
 
     printf("Necesitamos dos números primos:\n");
@@ -119,7 +119,6 @@ Claves genera_claves() {
     long int i=2,j=0;
     for(i; i<phi && j<MAX_CLAVES; i++) {
         if((mcd(i,n)==1) && (mcd(i,phi)==1)){ // e y n son coprimos, y e y phi(n) también
-            //printf("%ld y %ld son coprimos\n", i, n);
             ret[j].publica.e=i;
             ret[j].publica.n=n;
             ret[j].privada.n=n;
@@ -136,15 +135,12 @@ Claves genera_claves() {
 
     while(respuesta!='s' && respuesta!='n') {
         printf("\nPor defecto escogeremos la primera (0).\n¿Quiere cambiar (s/n)?\n");
-        //scanf(" %c", respuesta);
         getchar();
         respuesta = getchar();
     }
 
     if(respuesta=='s') {
-        //printf("Indique el número de la nueva clave: 1,...,%ld:\n", i);
-        //scanf("%ld", eleccion);
-        eleccion = getchar();
+        getchar();
         while(indice<1 || indice>i) {
             printf("Por favor escoja un número de clave válido: 1,...,%ld:\n", i-1);
             scanf("%ld", &indice);
@@ -159,61 +155,37 @@ Claves genera_claves() {
     return ret[0];
 }
 
-char * cifra(char * mensaje, Clave_publica clave) {
-    char *texto_cifrado = malloc(sizeof(char));
+long int * cifra(long int * mensaje, Clave_publica clave) {
     int k=0;
-    unsigned long int texto_plano[MAX_MENSAJE], temp[MAX_MENSAJE], enc;
-
-    for(k=0; mensaje[k]!=NULL; k++) {
-        texto_plano[k] = mensaje[k];
-        printf("%ld, ", texto_plano[k]);
-    }
-    texto_plano[k]=NULL;
-    printf("\n");
+    long int temp[MAX_MENSAJE], enc;
+    long int *texto_cifrado = malloc(sizeof(long int) * MAX_MENSAJE);
 
     printf("Clave->e: %ld, Clave->n: %ld\n", clave.e, clave.n);
-    k=0;
 
-    while(texto_plano[k] != NULL) {
-       //enc = texto_plano[k] - ('a'-1);
-       enc = texto_plano[k];
-       //temp[k] = ( ((unsigned long long int) pow(enc, clave.e)) % clave.n);
+    while(mensaje[k] != -1) {
+       enc = mensaje[k] - CHAR_OFFSET;
        temp[k] = exponente_modular(enc, clave.e, clave.n);
-       texto_cifrado[k] = temp[k];
-       //texto_cifrado[k] = temp[k] + ('a'-1);
-       printf("Int transformado: %ld\n", temp[k]);
-       printf("Char transformado: %c\n", texto_cifrado[k]);
+       texto_cifrado[k] = (temp[k] + CHAR_OFFSET);
        k++;
     }
-    texto_cifrado[k] = NULL;
+    texto_cifrado[k] = -1;
 
     return texto_cifrado;
 }
 
-char * descifra(char * mensaje, Clave_privada clave) {
-    char * texto_plano = malloc(sizeof(char));
+long int * descifra(long int * mensaje, Clave_privada clave) {
     int k=0;
-    unsigned long int texto_cifrado[MAX_MENSAJE], temp[MAX_MENSAJE], enc;
-
-    for(k=0; mensaje[k]!=NULL; k++) {
-        texto_cifrado[k] = mensaje[k];
-        printf("%ld, ", texto_cifrado[k]);
-    }
-    texto_cifrado[k]=NULL;
-    printf("\n");
-
+    long int temp[MAX_MENSAJE], enc;
+    long int *texto_plano = malloc(sizeof(long int) * MAX_MENSAJE);
     printf("Clave->d: %ld, Clave->n: %ld\n", clave.d, clave.n);
-    k=0;
     
-    while(texto_cifrado[k] != NULL) {
-        //enc = texto_cifrado[k] - ('a'-1);
-        enc = texto_cifrado[k];
+    while(mensaje[k] != -1) {
+        enc = mensaje[k] - CHAR_OFFSET;
         temp[k] = exponente_modular(enc, clave.d, clave.n);
-        texto_plano[k] = temp[k];
-        //texto_plano[k] = temp[k] + ('a'-1);
+        texto_plano[k] = (temp[k] + CHAR_OFFSET);
         k++;
     }
-    texto_plano[k] = NULL;
+    texto_plano[k] = -1;
 
     return texto_plano;
 }
@@ -221,14 +193,28 @@ char * descifra(char * mensaje, Clave_privada clave) {
 int main() {
    Claves mis_claves = genera_claves();
    char mensaje[MAX_MENSAJE];
-   char *cifrado, *descifrado;;
+   long int *cifrado, *descifrado, *texto;
+   int k=0, longitud;
    printf("Escriba su mensaje:\n");
    fflush(stdin);
-   scanf("%s", mensaje);
-   cifrado=cifra(mensaje, mis_claves.publica);
-   printf("El mensaje cifrado es:\n%s\n", cifrado);
+   getchar();
+   fgets(mensaje, MAX_MENSAJE, stdin);
+   while(mensaje[k] != NULL) {
+       texto[k] = mensaje[k];
+       k++;
+   }
+   texto[k] = -1;
+   cifrado=cifra(texto, mis_claves.publica);
+   printf("\n\nEl mensaje cifrado es:\n\n\t");
+   for(k=0; cifrado[k] != -1; k++)
+       printf("%c", cifrado[k]);
+   printf("\n\n");
    descifrado= descifra(cifrado, mis_claves.privada);
-   printf("El mensaje descifrado es:\n%s\n", descifrado);
+   printf("\n\nEl mensaje descifrado es:\n\n\t");
+   for(k=0; descifrado[k] != -1; k++)
+       printf("%c", descifrado[k]);
+   printf("\n\n");
+   free(cifrado);
+   free(descifrado);
    return 0;
 }
-
