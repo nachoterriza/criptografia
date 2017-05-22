@@ -51,13 +51,13 @@ unsigned int mcd(unsigned int a, unsigned int b) {
  */
 int exponente_modular(int base, int exp, int mod) {
     int k=0;
-    int ret=1;
+    long long int ret=1;
     for(;k<exp;k++) {
         ret*=base;
         ret = ret%mod;
     }
 
-    return ret;
+    return (int) ret;
 }
 
 
