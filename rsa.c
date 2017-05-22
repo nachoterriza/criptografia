@@ -162,10 +162,9 @@ long int * cifra(long int * mensaje, Clave_publica clave) {
     int k=0;
     long int *texto_cifrado = malloc(sizeof(long int) * MAX_MENSAJE);
 
-    while(mensaje[k] != -1) {
+    for(; mensaje[k] != -1; k++)
        texto_cifrado[k] = exponente_modular(mensaje[k], clave.e, clave.n);
-       k++;
-    }
+
     texto_cifrado[k] = -1;
 
     return texto_cifrado;
@@ -175,10 +174,9 @@ long int * descifra(long int * mensaje, Clave_privada clave) {
     int k=0;
     long int *texto_plano = malloc(sizeof(long int) * MAX_MENSAJE);
     
-    while(mensaje[k] != -1) {
+    for(; mensaje[k] != -1; k++)
         texto_plano[k] = exponente_modular(mensaje[k], clave.d, clave.n);
-        k++;
-    }
+
     texto_plano[k] = -1;
 
     return texto_plano;
@@ -203,12 +201,13 @@ int main() {
    printf("\n\nEl mensaje cifrado es:\n\n\t");
    for(k=0; cifrado[k] != -1; k++)
        printf("%c", (int) cifrado[k]);
-   printf("\n\n");
+   printf("\n");
    descifrado= descifra(cifrado, mis_claves.privada);
    printf("\n\nEl mensaje descifrado es:\n\n\t");
    for(k=0; descifrado[k] != -1; k++)
        printf("%c", (int) descifrado[k]);
    printf("\n\n");
+   free(texto);
    free(cifrado);
    free(descifrado);
    return 0;
