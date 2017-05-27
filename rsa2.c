@@ -156,10 +156,7 @@ Claves genera_claves() {
             ret[j].publica.n=n;
             ret[j].privada.n=n;
             ret[j].privada.d=inverso(i,phi);
-            printf("Creado: %" PRIu64 " - %" PRIu64 "\n", i, ret[j].privada.d);
             j++;
-           /* if(numero_de_digitos(i,10)==numero_de_digitos(ret[j].privada.d,10))
-                j++;*/
         }
     }
 
