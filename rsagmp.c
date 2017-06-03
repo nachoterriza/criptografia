@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MODULO          512
 #define MAX_MENSAJE     100
 
 typedef struct Clave_publica
@@ -81,17 +80,6 @@ void genera_claves(Clave_publica * kp, Clave_privada * ks)
         salida("Entrada incorrecta: Q no es primo");
     if(mpz_cmp(ks->p, ks->q) < 0)
         mpz_swap(ks->p, ks->q);
-    /*
-    {
-        
-        mpz_t temp;
-        mpz_init(temp);
-        mpz_set_ui(temp, mpz_get_ui(ks->p));
-        mpz_set_ui(ks->p, mpz_get_ui(ks->q));
-        mpz_set_ui(ks->q, mpz_get_ui(temp));
-        mpz_clear(temp);
-        
-    }*/
 
     else if(mpz_cmp(ks->p, ks->q) == 0)
         salida("Error: P y Q deben ser distintos");
@@ -137,6 +125,7 @@ int numero_de_digitos(mpz_t num, int base)
     for(; mpz_cmp_ui(entero, 0) > 0; k++)
         mpz_tdiv_q_ui(entero, entero, base);
 
+    mpz_clear(entero);
     return k;
 }
 
