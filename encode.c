@@ -1,3 +1,26 @@
+
+/**
+* Trabajo para la asignatura de Criptografia y Teoria de Codigos
+* Facultad de Informatica - Universidad Complutense de Madrid
+* Junio de 2017
+*
+*	Autores:
+*		Nacho Terriza		(github.com/nachoterriza)
+*		Pablo Dominguez		(github.com/pablo)
+*		Marcos XXXXX		(github.com/marcos)
+*		JuanJe Martos		(github.com/juanjeakabob)
+*
+*
+*	Este codigo dispone de licencia GNU: (para más información www.gnu.org)
+*
+*		This program is free software: you can redistribute it and/or modify
+*		it under the terms of the GNU General Public License as published by
+*		the Free Software Foundation, either version 3 of the License, or
+*		(at your option) any later version.
+*
+**/
+
+
 #include <gmp.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,6 +59,17 @@ void salida(char * mensaje) {
     exit(1);
 }
 
+
+/** Funcion es_primo:
+*	Entrada: num
+*	Salida: 
+*	1 si num es primo,
+*	0 si no lo es.
+*	Comportamiento: Comprueba si num es par
+*	y si no lo es divide por los impares
+*	hasta la raíz cuadrada de num.
+**/
+
 int es_primo(mpz_t num)
 {
     mpz_t max;
@@ -61,6 +95,22 @@ int es_primo(mpz_t num)
     return 1;
 }
 
+
+/**Funcion genera_claves
+*	Entrada: Memoria reservada para clave pública y clave privada
+*	Salida: VOID
+*	Comportamiento: Se piden dos números primos (p,q) al usuario, 
+*	y se calculan los parametros de las claves.
+*	n = p*q
+*	phi = (p-1) * (q-1)
+*	Tomamos e si podemos igual a 65537 que es igual a 2 ^16 + 1
+*	e tiene que cumplir MCD(e, phi)= 1 BOOM!
+*	La clave pública se compone de e y n
+*	Para la clave privada calculamos más coeficientes que
+*	nos ayudarán a descifrar
+*
+*
+**/
 
 void genera_claves(Clave_publica * kp, Clave_privada * ks)
 {
@@ -213,22 +263,7 @@ void descifra(mpz_t cifrado, Clave_privada clave, mpz_t descifrado)
     mpz_clear(m);
     return;
 }
-void cifrando(char * mensaje, Clave_publica clave) {
-    mpz_t msg;
-    mpz_init(msg);
-    char * bloque = malloc(sizeof(char) * TAM_BLOQUE);
-    int cifrados = strlen(mensaje);
-    int tamano;
 
-
-    if(cifrados > TAM_BLOQUE)
-        tamano = TAM_BLOQUE;
-    else
-        tamano = cifrados;
-
-    memcpy(bloque, mensaje+(-tamano+cifrados), tamano);
-
-}
 
 int main()
 {
