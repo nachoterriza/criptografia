@@ -213,22 +213,6 @@ void descifra(mpz_t cifrado, Clave_privada clave, mpz_t descifrado)
     mpz_clear(m);
     return;
 }
-void cifrando(char * mensaje, Clave_publica clave) {
-    mpz_t msg;
-    mpz_init(msg);
-    char * bloque = malloc(sizeof(char) * TAM_BLOQUE);
-    int cifrados = strlen(mensaje);
-    int tamano;
-
-
-    if(cifrados > TAM_BLOQUE)
-        tamano = TAM_BLOQUE;
-    else
-        tamano = cifrados;
-
-    memcpy(bloque, mensaje+(-tamano+cifrados), tamano);
-
-}
 
 int main()
 {
