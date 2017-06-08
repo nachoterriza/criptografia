@@ -7,7 +7,7 @@
 *	Autores:
 *		Nacho Terriza		(github.com/nachoterriza)
 *		Pablo Dominguez		(github.com/pablo)
-*		Marcos XXXXX		(github.com/marcos)
+*		Marcos Rafael		(github.com/marcos)
 *		JuanJe Martos		(github.com/juanjeakabob)
 *
 *
