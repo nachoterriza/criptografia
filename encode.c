@@ -169,6 +169,14 @@ void genera_claves(Clave_publica * kp, Clave_privada * ks)
 
 }
 
+/**
+ * Función numero_de_digitos:
+ * Entradas: num y base
+ * Salida: número de dígitos
+ * que tiene num expresado en
+ * la base base.
+ **/
+
 int numero_de_digitos(mpz_t num, int base)
 {
     int k = 0;
