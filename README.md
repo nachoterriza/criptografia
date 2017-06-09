@@ -12,7 +12,7 @@ Muestra una versión básica del cifrado en la que se cifra caracter a caracter.
 Muestra una versión más avanzada, reemplazando **unsigned int** por **unsigned long long int** o **uint64_t**. Aún son enteros demasiado pequeños como para trabajar con claves seguras. El mensaje se trata de cifrar todo a la vez, convirtiendo la cadena de caracteres en un número entero (cada caracter es un dígito en base 256). Si este número entero es mayor que el módulo de nuestra clave el descifrado no tendrá éxito: necesitaremos partir el mensaje en bloques (o hacer la clave de mayor tamaño).
 
 ## encode.c
-Para solucionar los problemas anteriores utilizamos la librería GNU de precisión múltiple, gmp [link](https://gmplib.org) con la que podemos tener en las claves el tamaño que queramos. Además dividimos el mensaje en bloques para poder que ninguno tenga una codificación mayor que el módulo, y así poder cifrar y descifrar mensajes de tamaño arbitrario sin problema.
+Para solucionar los problemas anteriores utilizamos la librería GNU de precisión múltiple, [gmp](https://gmplib.org) con la que podemos tener en las claves el tamaño que queramos. Además dividimos el mensaje en bloques para poder que ninguno tenga una codificación mayor que el módulo, y así poder cifrar y descifrar mensajes de tamaño arbitrario sin problema.
 
 ---
 # Compilación y Uso
