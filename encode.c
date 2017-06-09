@@ -5,18 +5,10 @@
 * Junio de 2017
 *
 *	Autores:
-*		Nacho Terriza		(github.com/nachoterriza)
-*		Pablo Dominguez		(github.com/pablo)
-*		Marcos Rafael		(github.com/marcos)
-*		JuanJe Martos		(github.com/juanjeakabob)
-*
-*
-*	Este codigo dispone de licencia GNU: (para más información www.gnu.org)
-*
-*		This program is free software: you can redistribute it and/or modify
-*		it under the terms of the GNU General Public License as published by
-*		the Free Software Foundation, either version 3 of the License, or
-*		(at your option) any later version.
+*		Nacho Terriza
+*		Pablo Dominguez	
+*		Marcos Rafael
+*		JuanJe Martos
 *
 **/
 
@@ -48,11 +40,12 @@ typedef struct Clave_privada
     mpz_t q_inv; /* Coeficiente, para el TCR: q_inv = q ^ (-1) (mod p) */
 } Clave_privada;
 
-/** Función salida:
- *  Entrada: Cadena mensaje a imprimir
- *  Salida: El mensaje impreso y fin de la 
- *  ejecución del programa con código de 
- *  salida 1.
+/**
+ * Función salida:
+ * Entrada: Cadena mensaje a imprimir
+ * Salida: El mensaje impreso y fin de la 
+ * ejecución del programa con código de 
+ * salida 1.
  */
 void salida(char * mensaje) {
     fprintf(stderr, "%s\n", mensaje);
@@ -60,14 +53,15 @@ void salida(char * mensaje) {
 }
 
 
-/** Funcion es_primo:
-*	Entrada: num
-*	Salida: 
-*	1 si num es primo,
-*	0 si no lo es.
-*	Comportamiento: Comprueba si num es par
-*	y si no lo es divide por los impares
-*	hasta la raíz cuadrada de num.
+/** 
+ * Función es_primo:
+ * Entrada: num
+ * Salida: 
+ * 1 si num es primo,
+ * 0 si no lo es.
+ * Comportamiento: Comprueba si num es par
+ * y si no lo es divide por los impares
+ * hasta la raíz cuadrada de num.
 **/
 
 int es_primo(mpz_t num)
@@ -96,20 +90,19 @@ int es_primo(mpz_t num)
 }
 
 
-/**Funcion genera_claves
-*	Entrada: Memoria reservada para clave pública y clave privada
-*	Salida: VOID
-*	Comportamiento: Se piden dos números primos (p,q) al usuario, 
-*	y se calculan los parametros de las claves.
-*	n = p*q
-*	phi = (p-1) * (q-1)
-*	Tomamos e si podemos igual a 65537 que es igual a 2 ^16 + 1
-*	e tiene que cumplir MCD(e, phi)= 1 BOOM!
-*	La clave pública se compone de e y n
-*	Para la clave privada calculamos más coeficientes que
-*	nos ayudarán a descifrar
-*
-*
+/**
+ * Función genera_claves:
+ * Entrada: Memoria reservada para clave pública y clave privada
+ * Salida: VOID
+ * Comportamiento: Se piden dos números primos (p,q) al usuario,
+ * y se calculan los parametros de las claves.
+ * n = p*q
+ * phi = (p-1) * (q-1)
+ * Tomamos e si podemos igual a 65537 que es igual a 2 ^16 + 1
+ * e tiene que cumplir MCD(e, phi)= 1 BOOM!
+ * La clave pública se compone de e y n
+ * Para la clave privada calculamos más coeficientes que
+ * nos ayudarán a descifrar.
 **/
 
 void genera_claves(Clave_publica * kp, Clave_privada * ks)
@@ -191,6 +184,14 @@ int numero_de_digitos(mpz_t num, int base)
     return k;
 }
 
+/**
+ * Función mensaje_a_entero:
+ * Entradas: el mensaje(puntero a caracter), su tamaño,
+ * y el entero que vamos a devolver (su dirección de memoria).
+ * Salida: void
+ * Comportamiento: expresamos mensaje omo número entero (cada 
+ * caracter es un dígito en base 256).
+ **/
 void mensaje_a_entero(char * mensaje, mpz_t rop, int tam)
 {
     mpz_set_ui(rop, 0);
@@ -208,6 +209,15 @@ void mensaje_a_entero(char * mensaje, mpz_t rop, int tam)
     return;
 }
 
+/**
+ * Función entero_a_mensaje:
+ * Entradas: entero a transformar y dirección de memoria
+ * donde guardar el mensaje descodificado.
+ * Salida: void
+ * Comportamiento: vamos sacando caraacter a caracter
+ * como el resto entre 256, y seguimos tratando el 
+ * cociente.
+ **/
 void entero_a_mensaje(mpz_t entero, char * destino)
 {
     int k = numero_de_digitos(entero, 256);
@@ -228,6 +238,14 @@ void entero_a_mensaje(mpz_t entero, char * destino)
     return;
 }
 
+/**
+ * Función cifra:
+ * Entradas: texto(entero), clave pública y espacio
+ * para devolver el mensaje cifrado (como entero).
+ * Salida: void
+ * Comportamiento: el texto es elevado a la clave
+ * pública (e) módulo n.
+ **/
 void cifra(mpz_t texto, Clave_publica clave, mpz_t cifrado)
 {
     gmp_printf("Me mandan: %Zd\n", texto);
@@ -235,6 +253,16 @@ void cifra(mpz_t texto, Clave_publica clave, mpz_t cifrado)
     return;
 }
 
+/**
+ * Función descifra:
+ * Entradas: cifrado(entero), clave privada y 
+ * espacio para devolver el mensaje descifrado.
+ * Salida: void
+ * Comportamiento: el texto cifrado se eleva al
+ * exponente de la clave privada (d) modulo n.
+ * Utilizamos el Teorema Chino del
+ * Resto para agilizar los cálculos.
+ **/
 void descifra(mpz_t cifrado, Clave_privada clave, mpz_t descifrado)
 {
     char * mensaje = malloc(sizeof(char) * MAX_MENSAJE);
