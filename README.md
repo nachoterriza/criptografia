@@ -16,6 +16,7 @@ Para solucionar los problemas anteriores utilizamos la librería GNU de precisi�
 
 ---
 # Compilación y Uso
+Es necesario tener instalada la librería gmp, disponible en la mayoría de distribuciones Linux como el paquete **gmp** o **gnump**, si no es posible descargarla desde [aquí](https://gmplib.org/#DOWNLOAD).
 
 ## rsa.c
 ```
