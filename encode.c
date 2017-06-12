@@ -89,6 +89,9 @@ int es_primo(mpz_t num)
     return 1;
 }
 
+void prueba_claves(Clave_publica * kp, Clave_privada * ks)
+{
+}
 
 /**
  * Función genera_claves:
@@ -139,20 +142,27 @@ void genera_claves(Clave_publica * kp, Clave_privada * ks)
     mpz_mul(phi, p_1, q_1);
 
     // Primero probamos si es factible el valor clásico, 2^16 + 1 = 65537
-    mpz_set_ui(ks->e, 65537);
-    if(!mpz_invert(ks->d, ks->e, phi))
+    int exp = 16;
+
+    for(; exp > 0; exp--)
     {
-        /* Probar con otros valores, e = 3, etc... */
-    }
-    else
-    {
-        mpz_mod(ks->d_p, ks->d, p_1);
-        mpz_mod(ks->d_q, ks->d, q_1);
-        mpz_invert(ks->q_inv, ks->q, ks->p);
-        mpz_set(kp->e, ks->e);
+        mpz_ui_pow_ui(ks->e, 2, exp);
+        mpz_add_ui(ks->e, ks->e, 1);
+        if(!mpz_invert(ks->d, ks->e, phi))
+        {
+            continue;
+        }
+        else
+        {
+            mpz_mod(ks->d_p, ks->d, p_1);
+            mpz_mod(ks->d_q, ks->d, q_1);
+            mpz_invert(ks->q_inv, ks->q, ks->p);
+            mpz_set(kp->e, ks->e);
+            break;
+        }
     }
 
-    printf("Claves generadas\n");
+    printf("\nClaves generadas\n");
     gmp_printf("\n\tClave pública:\n\n\t\tMódulo: %Zd (%#Zx)\n\t\tExponente: %Zd (%#Zx)\n", kp->n, kp->n, kp->e, kp->e);
     gmp_printf("\n\tClave privada:\n\n\t\tMódulo: %Zd (%#Zx)\n\t\tExponente público: %Zd (%#Zx)\n\t\tExponente privado: %Zd (%#Zx)\n\t\tPrimer primo P: %Zd (%#Zx)\n\t\tSegundo primo Q: %Zd (%#Zx)\n\t\tPrimer exponente d_p: %Zd (%#Zx)\n\t\tSegundo exponente d_q: %Zd (%#Zx)\n\t\tCoeficiente q_inverso: %Zd (%#Zx)\n\n",ks->n, ks->n, ks->e, ks->e, ks->d, ks->d, ks->p, ks->p, ks->q, ks->q, ks->d_p, ks->d_p, ks->d_q, ks->d_q, ks->q_inv, ks->q_inv);
 
