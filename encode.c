@@ -89,10 +89,6 @@ int es_primo(mpz_t num)
     return 1;
 }
 
-void prueba_claves(Clave_publica * kp, Clave_privada * ks)
-{
-}
-
 /**
  * Función genera_claves:
  * Entrada: Memoria reservada para clave pública y clave privada
