@@ -145,9 +145,7 @@ void genera_claves(Clave_publica * kp, Clave_privada * ks)
         mpz_ui_pow_ui(ks->e, 2, exp);
         mpz_add_ui(ks->e, ks->e, 1);
         if(!mpz_invert(ks->d, ks->e, phi))
-        {
             continue;
-        }
         else
         {
             mpz_mod(ks->d_p, ks->d, p_1);
@@ -156,6 +154,7 @@ void genera_claves(Clave_publica * kp, Clave_privada * ks)
             mpz_set(kp->e, ks->e);
             break;
         }
+        salida("No hemos podido generar claves con esos primos. Prueba otros!");
     }
 
     printf("\nClaves generadas\n");
